@@ -1,7 +1,9 @@
 console.log("Hello world Node");
+const contacts = require('./contacts')
 const fs = require("fs/promises")
 const { Command } = require('commander');
 const program = new Command();
+
 program
   .option('-a, --action <type>', 'choose action')
   .option('-i, --id <type>', 'user id')
@@ -13,23 +15,31 @@ program.parse(process.argv);
 
 const argv = program.opts();
 
-// TODO: рефакторити
-function invokeAction({ action, id, name, email, phone }) {
+const invokeAction = async({ action, id, name, email, phone }) => {
   switch (action) {
     case 'list':
-      // ...
+      const allContacts = await contacts.listContacts();
+      console.table(allContacts);
+      return allContacts;
+      
       break;
 
     case 'get':
-      // ... id
+      const contactById = await contacts.getContactById(id);
+      // console.log(contactById);
+      return contactById;
       break;
 
     case 'add':
-      // ... name email phone
+      const newContact = await contacts.addContact(name, email, phone);
+      console.log(newContact);
+      return newContact;
       break;
 
     case 'remove':
-      // ... id
+      const removedContact = await contacts.removeContact(id);
+      console.log(removedContact);
+      return removedContact;
       break;
 
     default:
